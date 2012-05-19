@@ -12,12 +12,9 @@ int init_tpe(void) {
 	if (IN_ERR(ret))
 		return ret;
 
-	ret = tpe_config_init();
-
-	if (IN_ERR(ret))
-		return ret;
-
 	hijack_syscalls();
+
+	tpe_config_init();
 
 	printk(PKPRE "added to kernel\n");
 

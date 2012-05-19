@@ -15,6 +15,8 @@
 #include <linux/jiffies.h>
 #include <linux/sysctl.h>
 #include <linux/err.h>
+#include <linux/security.h>
+#include <linux/seq_file.h>
 
 #include <asm/uaccess.h>
 #include <asm/insn.h>

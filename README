@@ -130,6 +130,8 @@ This module *should* work on most linux kernels version 2.6 and above, but has
 only been verified on the above systems. If you get a compile error or a kernel
 oops, please contact this module's author.
 
+This module *should* work on non-x86 systems, but so far hasn't been tested.
+
 ===============================================================================
 
 Compatibility Issues
