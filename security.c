@@ -6,9 +6,9 @@ struct security_operations *ptr_security_ops;
 
 // mmap
 
-int (*orig_security_file_mmap) (struct file *file, unsigned long reqprot,
-	unsigned long prot, unsigned long flags,
-	unsigned long addr, unsigned long addr_only);
+int (*orig_security_file_mmap) (struct file *, unsigned long,
+		unsigned long, unsigned long,
+		unsigned long, unsigned long);
 
 int tpe_security_file_mmap(struct file *file, unsigned long reqprot,
 		unsigned long prot, unsigned long flags,
@@ -30,8 +30,8 @@ int tpe_security_file_mmap(struct file *file, unsigned long reqprot,
 
 // mprotect
 
-int (*orig_security_file_mprotect) (struct vm_area_struct *vma, unsigned long reqprot,
-	unsigned long prot);
+int (*orig_security_file_mprotect) (struct vm_area_struct *, unsigned long,
+	unsigned long);
 
 int tpe_security_file_mprotect(struct vm_area_struct *vma, unsigned long reqprot,
 		unsigned long prot) {
@@ -52,7 +52,7 @@ int tpe_security_file_mprotect(struct vm_area_struct *vma, unsigned long reqprot
 
 // execve
 
-int (*orig_bprm_check_security) (struct linux_binprm *bprm);
+int (*orig_bprm_check_security) (struct linux_binprm *);
 
 int tpe_security_bprm_check(struct linux_binprm *bprm) {
 	int ret = 0;
@@ -82,7 +82,7 @@ struct file_operations *ptr_proc_sys_file_operations;
 static ssize_t (*orig_proc_sys_write)
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 19)
-	(int write, struct file * file, char __user * buf, size_t count, loff_t *ppos);
+	(int, struct file *, char __user *, size_t, loff_t *);
 
 static ssize_t tpe_proc_sys_write(int write, struct file * file, char __user * buf,
 		size_t count, loff_t *ppos) {
@@ -99,7 +99,7 @@ static ssize_t tpe_proc_sys_write(int write, struct file * file, char __user * b
 	return ret;
 }
 #else
-	(struct file *file, const char __user *buf, size_t count, loff_t *ppos);
+	(struct file *, const char __user *, size_t, loff_t *);
 
 static ssize_t tpe_proc_sys_write(struct file *file, const char __user *buf,
 		size_t count, loff_t *ppos) {
@@ -152,7 +152,7 @@ int tpe_kallsyms_open(struct inode *inode, struct file *file) {
 struct kernsym sym_pid_dentry_operations;
 struct dentry_operations *ptr_pid_dentry_operations;
 
-int (*orig_pid_revalidate) (struct dentry *dentry, struct nameidata *nd);
+int (*orig_pid_revalidate) (struct dentry *, struct nameidata *);
 
 int tpe_pid_revalidate(struct dentry *dentry, struct nameidata *nd) {
 	int ret = 0;
