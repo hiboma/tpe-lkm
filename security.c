@@ -73,33 +73,7 @@ int tpe_security_bprm_check(struct linux_binprm *bprm) {
 struct kernsym sym_proc_sys_file_operations;
 struct file_operations *ptr_proc_sys_file_operations;
 
-/*
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 19)
-	{"do_rw_proc", &sym_proc_sys_write, (unsigned long *)tpe_proc_sys_write},
-#endif
-*/
-
-static ssize_t (*orig_proc_sys_write)
-
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 19)
-	(int, struct file *, char __user *, size_t, loff_t *);
-
-static ssize_t tpe_proc_sys_write(int write, struct file * file, char __user * buf,
-		size_t count, loff_t *ppos) {
-	char filename[MAX_FILE_LEN], *f;
-	ssize_t ret;
-
-	f = tpe_d_path(file, filename, MAX_FILE_LEN);
-
-	if (tpe_lock && write && !strncmp("/proc/sys/tpe", f, 13))
-		return -EPERM;
-
-	ret = orig_proc_sys_write(write, file, buf, count, ppos);
-
-	return ret;
-}
-#else
-	(struct file *, const char __user *, size_t, loff_t *);
+static ssize_t (*orig_proc_sys_write) (struct file *, const char __user *, size_t, loff_t *);
 
 static ssize_t tpe_proc_sys_write(struct file *file, const char __user *buf,
 		size_t count, loff_t *ppos) {
@@ -115,7 +89,6 @@ static ssize_t tpe_proc_sys_write(struct file *file, const char __user *buf,
 
 	return ret;
 }
-#endif
 
 // lsmod
 
