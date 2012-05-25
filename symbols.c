@@ -222,7 +222,7 @@ int find_symbol_address(struct kernsym *sym, const char *symbol_name) {
 	struct new_utsname *uts = utsname();
 	#endif
 
-	sym->name = symbol_name;
+	sym->name = (char *)symbol_name;
 
 	ret = find_symbol_address_from_file(sym, "/proc/kallsyms");
 
