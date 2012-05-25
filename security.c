@@ -266,6 +266,11 @@ static inline void set_addr_ro(unsigned long addr, bool flag) {
 
 }
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 19)
+// in old kernels, file_mmap calls file_mmap_addr, so focus on that one instead
+#define file_mmap file_mmap_addr
+#endif
+
 void hijack_syscalls(void) {
 
 	int ret;
