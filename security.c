@@ -183,6 +183,27 @@ static inline pte_t *tpe_lookup_address(unsigned long address, unsigned int *lev
 #define tpe_lookup_address(address, level) lookup_address(address, level);
 #endif
 
+static inline bool page_is_ro(
+#if (defined(CONFIG_XEN) || defined(CONFIG_X86_PAE)) && LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 26)
+	struct page *pg) {
+
+	if (pg->flags & VM_WRITE) return false;
+	else return true;
+
+#else
+	pte_t *pte) {
+
+#if !defined(CONFIG_X86_64) && LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 26)
+	if (pte_val(*pte) & _PAGE_RW) return false;
+	else return true;
+#else  
+	if (pte->pte & _PAGE_RW) return false;
+	else return true;
+#endif
+
+#endif
+}
+
 static inline void set_addr_rw(unsigned long addr, bool *flag) {
 
 #if (defined(CONFIG_XEN) || defined(CONFIG_X86_PAE)) && LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 26)
@@ -190,8 +211,12 @@ static inline void set_addr_rw(unsigned long addr, bool *flag) {
 
 	pgprot_t prot;
 	pg = virt_to_page(addr);
-	prot.pgprot = VM_READ | VM_WRITE;
-	change_page_attr(pg, 1, prot);
+
+	if (!page_is_ro(pg)) *flag = false;
+	else {
+		prot.pgprot = VM_READ | VM_WRITE;
+		change_page_attr(pg, 1, prot);
+	}
 #else
 	unsigned int level;
 	pte_t *pte;
@@ -201,10 +226,10 @@ static inline void set_addr_rw(unsigned long addr, bool *flag) {
 	pte = tpe_lookup_address(addr, &level);
 
 #if !defined(CONFIG_X86_64) && LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 26)
-	if (pte_val(*pte) & _PAGE_RW) *flag = false;
+	if (!page_is_ro(pte)) *flag = false;
 	else pte_val(*pte) |= _PAGE_RW;
 #else
-	if (pte->pte & _PAGE_RW) *flag = false;
+	if (!page_is_ro(pte)) *flag = false;
 	else pte->pte |= _PAGE_RW;
 #endif
 #endif
@@ -216,6 +241,9 @@ static inline void set_addr_ro(unsigned long addr, bool flag) {
 #if (defined(CONFIG_XEN) || defined(CONFIG_X86_PAE)) && LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 26)
 	struct page *pg;
 
+	if (!flag)
+		return;
+
 	pgprot_t prot;
 	pg = virt_to_page(addr);
 	prot.pgprot = VM_READ;
@@ -224,16 +252,16 @@ static inline void set_addr_ro(unsigned long addr, bool flag) {
 	unsigned int level;
 	pte_t *pte;
 
-	// only set back to readonly if it was readonly before
-	if (flag) {
-		pte = tpe_lookup_address(addr, &level);
+	if (!flag)
+		return;
+
+	pte = tpe_lookup_address(addr, &level);
 
 #if !defined(CONFIG_X86_64) && LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 26)
-		pte_val(*pte) = pte_val(*pte) &~_PAGE_RW;
+	pte_val(*pte) = pte_val(*pte) &~_PAGE_RW;
 #else
-		pte->pte = pte->pte &~_PAGE_RW;
+	pte->pte = pte->pte &~_PAGE_RW;
 #endif
-	}
 #endif
 
 }
