@@ -1,14 +1,10 @@
 #ifndef TPE_H_INCLUDED
 #define TPE_H_INCLUDED
 
-#include <linux/init.h>
 #include <linux/module.h>
-#include <linux/kernel.h>
 #include <linux/file.h>
 #include <linux/mman.h>
-#include <linux/binfmts.h>
 #include <linux/version.h>
-#include <linux/utsname.h>
 #include <linux/kallsyms.h>
 #include <linux/dcache.h>
 #include <linux/fs.h>
@@ -17,9 +13,7 @@
 #include <linux/err.h>
 #include <linux/security.h>
 #include <linux/seq_file.h>
-
 #include <asm/uaccess.h>
-#include <asm/insn.h>
 
 #ifndef CONFIG_SECURITY
 #error "This module requires CONFIG_SECURITY to be enabled"
