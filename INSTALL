@@ -9,13 +9,11 @@ To build the module from source, run "make". Output will look like:
 	make -C /lib/modules/2.6.32-131.2.1.el6.x86_64/build M=/home/cormander/git/tpe-lkm modules
 	make[1]: Entering directory `/usr/src/kernels/2.6.32-131.2.1.el6.x86_64'
 	  CC [M]  /home/cormander/git/tpe-lkm/core.o
-	  CC [M]  /home/cormander/git/tpe-lkm/init.o
+	  CC [M]  /home/cormander/git/tpe-lkm/module.o
 	  CC [M]  /home/cormander/git/tpe-lkm/security.o
 	  CC [M]  /home/cormander/git/tpe-lkm/symbols.o
 	  CC [M]  /home/cormander/git/tpe-lkm/malloc.o
-	  CC [M]  /home/cormander/git/tpe-lkm/hijacks.o
-	  CC [M]  /home/cormander/git/tpe-lkm/arch/x86/lib/inat.o
-	  CC [M]  /home/cormander/git/tpe-lkm/arch/x86/lib/insn.o
+	  CC [M]  /home/cormander/git/tpe-lkm/sysctl.o
 	  LD [M]  /home/cormander/git/tpe-lkm/tpe.o
 	  Building modules, stage 2.
 	  MODPOST 1 modules
