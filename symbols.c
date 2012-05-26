@@ -93,6 +93,8 @@ today.
 
 */
 
+#include <linux/utsname.h>
+
 #define SYSTEM_MAP_PATH "/boot/System.map-"
 
 // borrowed (copied) from simple_strtol() in vsprintf.c
