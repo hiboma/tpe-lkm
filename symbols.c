@@ -9,15 +9,11 @@
 static int find_symbol_callback(struct kernsym *sym, const char *name, struct module *mod,
 	unsigned long addr) {
 
-	if (sym->found) {
-		sym->end_addr = (unsigned long *)addr;
-		return 1;
-	}
-
 	// this symbol was found. the next callback will be the address of the next symbol
 	if (name && sym->name && !strcmp(name, sym->name)) {
 		sym->addr = (unsigned long *)addr;
 		sym->found = true;
+		return 1;
 	}
 
 	return 0;
@@ -37,8 +33,6 @@ int find_symbol_address(struct kernsym *sym, const char *symbol_name) {
 	if (!ret)
 		return -EFAULT;
 
-	sym->size = sym->end_addr - sym->addr;
-	sym->new_size = sym->size;
 	sym->run = sym->addr;
 
 	return 0;
@@ -46,11 +40,6 @@ int find_symbol_address(struct kernsym *sym, const char *symbol_name) {
 
 static int find_address_callback(struct kernsym *sym, const char *name, struct module *mod,
 	unsigned long addr) {
-
-	if (sym->found) {
-		sym->end_addr = (unsigned long *)addr;
-		return 1;
-	}
 
 	// this address was found. the next callback will be the address of the next symbol
 	if (addr && (unsigned long) sym->addr == addr) {
@@ -62,6 +51,8 @@ static int find_address_callback(struct kernsym *sym, const char *name, struct m
 		strncpy(sym->name, name, strlen(name)+1);
 		sym->name_alloc = true;
 		sym->found = true;
+
+		return 1;
 	}
 
 	return 0;
@@ -79,8 +70,6 @@ int find_address_symbol(struct kernsym *sym, unsigned long addr) {
 	if (!ret)
 		return -EFAULT;
 
-	sym->size = sym->end_addr - sym->addr;
-	sym->new_size = sym->size;
 	sym->run = sym->addr;
 
 	return 0;
@@ -157,12 +146,7 @@ int find_symbol_address_from_file(struct kernsym *sym, const char *filename) {
 				memset(sys_string, 0, MAX_FILE_LEN);
 				strncpy(sys_string, strsep(&p, " "), MAX_FILE_LEN);
 
-				sym->end_addr = (unsigned long *) str2long(sys_string, NULL, 16);
-
 				kfree(sys_string);
-
-				sym->size = sym->end_addr - sym->addr;
-				sym->new_size = sym->size;
 
 				//printk(PKPRE "From %s, found %s end addr at %lx (total size %lu)\n", filename, sym->name, sym->end_addr, sym->size);
 
