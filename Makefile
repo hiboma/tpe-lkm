@@ -8,7 +8,6 @@ MODULE_SOURCES := \
 	module.c \
 	security.c \
 	symbols.c \
-	malloc.c \
 	sysctl.c
 
 TESTS := tests/mmap-mprotect-test
@@ -63,7 +62,6 @@ $(MODULE_NAME)-y := \
 	module.o \
 	security.o \
 	symbols.o \
-	malloc.o \
 	sysctl.o
 
 endif

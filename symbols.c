@@ -54,7 +54,11 @@ static int find_address_callback(struct kernsym *sym, const char *name, struct m
 
 	// this address was found. the next callback will be the address of the next symbol
 	if (addr && (unsigned long) sym->addr == addr) {
-		sym->name = malloc(strlen(name)+1);
+		sym->name = kmalloc(strlen(name)+1, GFP_KERNEL);
+
+		if (sym->name == NULL)
+			return -ENOMEM;
+
 		strncpy(sym->name, name, strlen(name)+1);
 		sym->name_alloc = true;
 		sym->found = true;
