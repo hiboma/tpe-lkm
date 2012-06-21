@@ -35,6 +35,12 @@
 
 #define IN_ERR(x) (x < 0)
 
+#ifndef bool
+#define bool _Bool
+#define true 1 
+#define false 0
+#endif
+
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 28)
 #define get_task_uid(task) task->uid
 #define get_task_parent(task) task->parent
