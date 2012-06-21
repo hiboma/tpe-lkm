@@ -41,6 +41,21 @@
 #define false 0
 #endif
 
+#ifndef pud_t
+#define pud_t pgd_t
+#endif
+
+#ifndef pud_offset
+#define pud_offset(d, va) d
+#endif
+#ifndef pud_none
+#define pud_none(pud)         0
+#endif
+
+#ifndef pud_present
+#define pud_present(pud)      1
+#endif
+
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 28)
 #define get_task_uid(task) task->uid
 #define get_task_parent(task) task->parent
