@@ -215,8 +215,10 @@ int find_symbol_address(struct kernsym *sym, const char *symbol_name) {
 
 	char *filename;
 	int ret;
+	#if LINUX_VERSION_CODE == KERNEL_VERSION(2, 6, 9)
+	struct new_utsname *uts = &system_utsname;
 	// TODO: figure out when this related commit was
-	#if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 19)
+	#elif LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 19)
 	struct new_utsname *uts = init_utsname();
 	#else
 	struct new_utsname *uts = utsname();
